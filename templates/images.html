@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Display</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="text-center">Images for "{{query}}"</h1>
+        <a href="/search" class="btn btn-info mb-3">New Search</a>
+        <div class="img-container">
+            {% for url in image_urls %}
+                <form action="/save-image" method="post" class="text-center">
+                    <input type="hidden" name="query" value="{{ query }}">
+                    <input type="hidden" name="image_url" value="{{ url }}">
+                    <img src="{{ url }}" alt="Image" class="img-thumbnail mb-2">
+                    <button type="submit" class="btn btn-primary">Save Image</button>
+                </form>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flashcards</title>
+    <!-- Bootstrap CSS and Custom CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="text-center">Flashcards</h1>
+        <div class="row">
+                    {% for flashcard in flashcards %}
+                        <div class="col-md-4 mb-4">
+                            <div class="flip-card">
+                                <div class="flip-card-inner">
+                                    <div class="flip-card-front">
+                                        <img src="{{ flashcard.image_url }}" alt="Image" class="card-img">
+
+                                    </div>
+                                    <div class="flip-card-back">
+                                        <p id="mnemonic-{{ loop.index }}"></p>
+                                        <!-- Include your mnemonic and button if needed -->
+                                    </div>
+                                </div>
+                                      <button class="btn btn-secondary generate-mnemonic"
+                                                data-target="#card-{{ loop.index }}"
+                                                data-mnemonic-target="#mnemonic-{{ loop.index }}"
+                                                data-query="{{flashcard.query }}">
+                                            Generate Mnemonic
+                                        </button>
+
+                            </div>
+                        </div>
+                    {% endfor %}
+
+        </div>
+        <a href="/search" class="btn btn-info mt-3">Back to Search</a>
+    </div>
+
+
+    <script>
+        document.querySelectorAll('.generate-mnemonic').forEach(button => {
+            button.addEventListener('click', function() {
+                var cardId = this.dataset.target;
+                var mnemonicTarget = this.dataset.mnemonicTarget;
+                var query = this.dataset.query;  // Get the query
+
+                fetch('/generate-mnemonic', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ query: query })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.querySelector(mnemonicTarget).textContent = data.mnemonic;
+                    document.querySelector(cardId).classList.add('is-flipped');
+                });
+            });
+        });
+
+    </script>
+    <script>
+        document.querySelectorAll('.flip-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.querySelector('.flip-card-inner').classList.toggle('is-flipped');
+            });
+        });
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js"></script>
